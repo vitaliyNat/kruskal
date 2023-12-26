@@ -39,9 +39,10 @@ public:
 
 template <class  T>
 
-int compare(T* first, T *second){
+int compare(T first, T second){
     return first - second < 0 ? -1 :first - second == 0? 0 : 1;
 }
+
 
 
 template <class  T>
@@ -149,7 +150,7 @@ public:
             temp->next->prev = temp->prev;
             temp->prev->next = temp->next;
             this->size--;
-            cout << "Success" << endl;
+
         } else {
             cout << "Failed: invalid value" << endl;
         }
@@ -160,7 +161,7 @@ public:
             this->index(index)->next->prev = this->index(index)->prev;
             this->index(index)->prev->next = this->index(index)->next;
             this->size--;
-            cout << "Success" << endl;
+
         } else {
             cout << "Failed: invalid index" << endl;
         }
@@ -221,13 +222,13 @@ public:
         }
 
         Node<T> *tmp = this->head;
-        if (compare(this->head->data, value) >= 1) {
+        if (compare(*this->head->data, *value) >= 1) {
             this->add_begin(value);
             return;
         }
         auto *newNode = new Node(value);
         while(true){
-            if (compare(tmp->data, value) >= 0) {
+            if (compare(*tmp->data, *value) >= 0) {
                 newNode->prev = tmp->prev;
                 auto tmp1 = tmp->prev;
                 newNode->next = tmp;

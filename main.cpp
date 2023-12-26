@@ -2,7 +2,6 @@
 #include "linked-list.h"
 #include <string>
 
-
 class Vertex{
 public:
     double x;
@@ -12,6 +11,9 @@ public:
         this->x = x;
         this->y = y;
 
+    }
+    string getVertixString(){
+        return "( " + to_string(x) + ", " + to_string(y) + " ), ";
     }
 
 
@@ -28,8 +30,11 @@ public:
         this->second = second;
         this->distance = distance;
     }
-    double operator- (Edge * edge2) const{
-        return this->distance - edge2->distance;
+    double operator- (Edge  edge2) const{
+        return this->distance - edge2.distance;
+    }
+    string getEdgeString(){
+        return "[" +first->getVertixString() + second->getVertixString() + "],";
     }
 };
 
@@ -96,6 +101,27 @@ public:
         edges->push_tail(edge);
     }
 
+    string getVerticesString(){
+        auto * tmp = this->vertices->getHead();
+        string result = "[";
+        while(tmp){
+            result += tmp->data->getVertixString();
+            tmp = tmp->next;
+        }
+        result+=" ]";
+        return result;
+    }
+    string getEdgesString(){
+        auto * tmp = this->edges->getHead();
+        string result = "[";
+        while(tmp){
+            result += tmp->data->getEdgeString();
+            tmp = tmp->next;
+        }
+        result+=" ]";
+        return result;
+    }
+
 
 };
 
@@ -123,7 +149,7 @@ Graph * Kruskal(Graph * graph){
         edges->orderedInsert(tmp1->data);
         tmp1 = tmp1->next;
     }
-
+    tmp1 = edges->getHead();
     while(unionGraphs->getSize() > 1){
         tmp1 = edges->getHead();
         auto * tempFirstVertex = graph->vertices->searchNode(tmp1->data->first);
@@ -132,19 +158,6 @@ Graph * Kruskal(Graph * graph){
         Graph * tempFirstUnion;
         Graph * tempSecondUnion;
         while(tempUnion) {
-//            bool isContainFirst = tempUnion->data->vertices->searchNode(tempFirstVertex);
-//            bool isContainsSecond = tempUnion->data->vertices->searchNode(tempSecondVertex);
-//            if (!isContainFirst && !isContainsSecond) {
-//                tempUnion->data->add(tmp1->data, tempFirstVertex, tempSecondVertex);
-//                break;
-//            } else if (!isContainFirst) {
-//                tempUnion->data->add(tmp1->data, tempFirstVertex);
-//                break;
-//            } else if (!isContainsSecond) {
-//                tempUnion->data->add(tmp1->data, tempSecondVertex);
-//                break;
-//            }
-
             if(tempUnion->data->vertices->searchNode(tempFirstVertex->data)){
                 tempFirstUnion = tempUnion->data;
             }
@@ -165,9 +178,9 @@ Graph * Kruskal(Graph * graph){
     return unionGraphs->getHead()->data;
 
 }
-Graph * readGraphFromFile(){
+Graph * readGraphFromFile(const string fileName){
     auto * graph = new Graph();
-    ifstream inputFile("./g1.txt",ifstream::in);
+    ifstream inputFile("./"+fileName+".txt",ifstream::in);
 
     if (!inputFile.is_open()) {
         cerr << "Unable to open the file." << endl;
@@ -197,8 +210,25 @@ Graph * readGraphFromFile(){
 
 
 int main() {
-    auto * graph = readGraphFromFile();
+    auto * graph = readGraphFromFile("g1");
+    auto * temp1 = graph->edges->getHead();
+    double  sum1 = 0;
+    while(temp1){
+        sum1+=temp1->data->distance;
+        temp1 = temp1->next;
+    }
+    cout<<sum1 <<endl;
     auto * kruskal = Kruskal(graph);
+
+    auto * temp = kruskal->edges->getHead();
+    double  sum = 0;
+    while(temp){
+        sum+=temp->data->distance;
+        temp = temp->next;
+    }
+    cout<< sum<<endl;
+    cout<< kruskal->getVerticesString()<<endl;
+    cout<< kruskal->getEdgesString();
 
     return 0;
 }
